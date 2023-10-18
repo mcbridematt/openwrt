@@ -19,4 +19,21 @@ DEFAULT_PACKAGES += mkf2fs e2fsprogs
 # mounting ESP partition
 DEFAULT_PACKAGES += blkid kmod-fs-vfat
 
+# Overwrite global LINUX_KCONFIG_LIST to add arch/arm64/configs/defconfig before
+# armv8 configs, after global generic linux configs and target/board (armsr)
+# linux configs
+#
+# Prefer not creating this condition and put the body in armv8/target.mk, but
+# it looks that makefile is called before global target.mk and
+# LINUX_KCONFIG_LIST is not set as expected
+ifeq ($(SUBTARGET),armv8)
+	LINUX_KCONFIG_LIST = \
+		$(wildcard \
+			$(GENERIC_LINUX_CONFIG) \
+			$(LINUX_TARGET_CONFIG) \
+			$(LINUX_DIR)/arch/arm64/configs/defconfig \
+			$(LINUX_SUBTARGET_CONFIG) \
+			$(TOPDIR)/env/kernel-config)
+endif
+
 $(eval $(call BuildTarget))
