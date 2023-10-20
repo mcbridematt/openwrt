@@ -1,6 +1,8 @@
 #
 # SystemReady-Certified Platforms
 #
+# Exclude the rest of platforms not certified.
+#
 # CONFIG_ARCH_ACTIONS is not set
 # CONFIG_ARCH_SUNXI is not set
 # CONFIG_ARCH_ALPINE is not set
@@ -37,25 +39,43 @@ CONFIG_ARCH_SYNQUACER=y
 # CONFIG_ARCH_XGENE is not set
 CONFIG_ARCH_ZYNQMP=y
 
+#
 # Not SystemReady-Certified Platforms
+#
+# Pending to be certified
+#
+# Enable BCM2835 so the RPi 4 with the PiTf firmware can be used as a test
+# target (especially with ACPI)
 CONFIG_ARCH_BCM2835=y
 CONFIG_ARCH_BCM_IPROC=y
 CONFIG_ARCH_BCM=y
 CONFIG_ARCH_BRCMSTB=y
+
+# Part of Traverse boards, pending to be certified
+# MVEBU is for the Marvell (non-Cavium) SoCs
 CONFIG_ARCH_MVEBU=y
+
+# The broadband specific SoC's (ARCH_BCMBCA) are left out as it is assumed
+# these will not be doing EFI boot
+# CONFIG_ARCH_BCMBCA is not set
 
 #
 # Features not supported by OpenWrt
 #
+# Disable features are not used by OpenWRT supported devices
+#
 # CONFIG_CHROME_PLATFORMS is not set
 # CONFIG_WLAN is not set
 # CONFIG_WWAN is not set
+
+# Disable in favor of OpenWrt SWCONFIG implementation, as both cannot coexist
 # CONFIG_NET_DSA is not set
 
 #
 # Modules built-in to avoid creating OpenWrt kernel module definitions for all
 # of them
 #
+# Config enabled as module, move them from '=m' to '=y'
 CONFIG_BRIDGE=y
 CONFIG_BT=y
 # CONFIG_BT_HCIBTUSB is not set
@@ -113,6 +133,7 @@ CONFIG_USB_XHCI_PCI_RENESAS=y
 #
 # Features not enabled by default in arch/arm64/configs/defconfig
 #
+# TODO: Verify if these configs can be added by default in upstream
 CONFIG_AHCI_IMX=y
 CONFIG_AHCI_MVEBU=y
 CONFIG_AMPERE_ERRATUM_AC03_CPU_38=y
