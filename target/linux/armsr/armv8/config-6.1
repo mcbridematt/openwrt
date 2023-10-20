@@ -194,3 +194,8 @@ CONFIG_USB_DWC3_PCI=y
 CONFIG_USB_EHCI_HCD_ORION=y
 CONFIG_USB_MXS_PHY=y
 CONFIG_USB_OTG_FSM=y
+
+# NXP DPAA2 platforms (LS1088,2088,LX2160) need it to avoid an IOMMU fault
+# issue at startup. Pending patches to fix this problem:
+# https://patchwork.ozlabs.org/project/uboot/cover/20230927153049.12786-1-laurentiu.tudor@nxp.com/
+# CONFIG_ARM_SMMU_DISABLE_BYPASS_BY_DEFAULT is not set
