@@ -104,6 +104,7 @@ define Kernel/SetNoInitramfs
 endef
 
 define Kernel/Setolddefconfig
+	cp $(LINUX_DIR)/.config $(LINUX_DIR)/.config_before_olddefconfig.$(shell date +%s)
 	$(KERNEL_MAKE) olddefconfig
 endef
 
@@ -119,6 +120,7 @@ define Kernel/Configure/Default
 	$(SCRIPT_DIR)/kconfig.pl 'm+' '+' $(LINUX_DIR)/.config.target /dev/null $(LINUX_DIR)/.config.override > $(LINUX_DIR)/.config.set
 	$(call Kernel/SetNoInitramfs)
 	rm -rf $(KERNEL_BUILD_DIR)/modules
+	cp $(LINUX_DIR)/.config.set $(LINUX_DIR)/.config.set.$(shell date +%s)
 	cmp -s $(LINUX_DIR)/.config.set $(LINUX_DIR)/.config.prev || { \
 		cp $(LINUX_DIR)/.config.set $(LINUX_DIR)/.config; \
 		cp $(LINUX_DIR)/.config.set $(LINUX_DIR)/.config.prev; \
@@ -126,12 +128,15 @@ define Kernel/Configure/Default
 ifeq ($(BOARD),armsr)
 	$(call Kernel/Setolddefconfig)
 endif
+	cp $(LINUX_DIR)/.config $(LINUX_DIR)/.config.$(shell date +%s)
 	$(_SINGLE) [ -d $(LINUX_DIR)/user_headers ] || $(KERNEL_MAKE) $(if $(findstring uml,$(BOARD)),ARCH=$(ARCH)) INSTALL_HDR_PATH=$(LINUX_DIR)/user_headers headers_install
+	cp $(LINUX_DIR)/.config $(LINUX_DIR)/.config_post_header.$(shell date +%s)
 	grep '=[ym]' $(LINUX_DIR)/.config.set | LC_ALL=C sort | $(MKHASH) md5 > $(LINUX_DIR)/.vermagic
 endef
 
 define Kernel/CompileModules/Default
 	rm -f $(LINUX_DIR)/vmlinux $(LINUX_DIR)/System.map
+	cp $(LINUX_DIR)/.config $(LINUX_DIR)/.config_compilemodules.$(shell date +%s)
 	+$(KERNEL_MAKE) $(if $(KERNELNAME),$(KERNELNAME),all) modules
 	# If .config did not change, use the previous timestamp to avoid package rebuilds
 	cmp -s $(LINUX_DIR)/.config $(LINUX_DIR)/.config.modules.save && \
